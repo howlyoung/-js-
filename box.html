@@ -1,0 +1,140 @@
+<html>
+<head></head>
+<!--<div style="width:10px; height:10px; background-color:olive; position:relative;left:0;top:0"></div>-->
+
+<body>
+<hr size=1 color=#00ffff  noshade style="position: absolute;left: 110px;top: 202px;width: 98px;height: 1px">
+<div style="border-left:1px solid #00ffff;width:1px;height:210px;position: absolute;left: 110px;top: 0px;"> </div>
+<div style="border-left:1px solid #00ffff;width:1px;height:210px;position: absolute;left: 209px;top: 0px;"> </div>
+
+
+
+<div id="map"></div>
+<h1 id="score">0</h1>
+</body>
+<script>
+    //T
+    var t_box_1 = [[0,1],[1,1],[2,1],[1,0]];
+    var t_box_2 = [[0,1],[1,2],[1,1],[1,0]];
+    var t_box_3 = [[0,0],[1,0],[1,1],[2,0]];
+    var t_box_4 = [[0,0],[0,1],[0,2],[1,1]];
+    //T end
+
+    //L
+    var l_box_r_1 = [[0,0],[0,1],[0,2],[1,0]];
+    var l_box_r_2 = [[0,0],[0,1],[1,1],[2,1]];
+    var l_box_r_3 = [[0,0],[1,0],[2,0],[2,1]];
+    var l_box_r_4 = [[0,2],[1,2],[1,1],[1,0]];
+
+    var l_box_l_1 = [[0,0],[1,0],[1,1],[1,2]];
+    var l_box_l_2 = [[0,1],[0,0],[1,0],[2,0]];
+    var l_box_l_3 = [[0,0],[0,1],[0,2],[1,2]];
+    var l_box_l_4 = [[0,1],[1,1],[2,1],[2,0]];
+    //L end
+
+    var vertical_box = [[0,0],[1,0],[2,0],[3,0]];
+    var horizontal_box = [[0,0],[0,1],[0,2],[0,3]];
+
+    var rectangle_box = [[0,0],[1,0],[1,1],[0,1]];
+
+    //Z
+    var z_box_l_1 = [[0,2],[0,1],[1,1],[1,0]];
+    var z_box_l_2 = [[0,0],[1,0],[1,1],[2,1]];
+
+    var z_box_r_1 = [[0,0],[0,1],[1,1],[1,2]];
+    var z_box_r_2 = [[0,1],[1,1],[1,0],[2,0]];
+    //Z end
+
+    var all_box = [
+        t_box_1,t_box_2,t_box_3,t_box_4,
+        l_box_r_1,l_box_r_2,l_box_r_3,l_box_r_4,
+        l_box_l_1,l_box_l_2,l_box_l_3,l_box_l_4,
+        vertical_box,
+        horizontal_box,
+        rectangle_box,
+        z_box_l_1,z_box_l_2,
+        z_box_r_1,z_box_r_2
+    ];
+</script>
+
+<script type="text/javascript" src="draw.js"></script>
+
+<script type="text/javascript">
+    //    var draw = new Draw();
+    var map = document.getElementById('map');
+    //    var pos = {'x':10,'y':10};
+    //    var length = all_box.length;
+    //    for(var i=0;i<length;i++) {
+    //        map.appendChild(draw.block(all_box[i],pos));
+    //        pos.x += 50;
+    //    }
+    //    var div = draw.block(t_box_1,pos);
+    //    map.appendChild(div);
+    //
+    var score = document.getElementById('score');
+    var game1 = new Game(map,score);
+    //临时键盘控制
+    document.body.onkeydown = function(event) {
+        switch (event.keyCode) {
+            case 37:
+                console.log('left');
+                game1.moveBox(2);
+                break;
+            case 38:
+                console.log('up');
+                game1.tranBox();
+                break;
+
+            case 39:
+                console.log('right');
+                game1.moveBox(3);
+                break;
+            case 40:
+                console.log('down');
+                if(!game1.moveBox(1)) {
+                    //融合
+                    game1.fuse();
+                    game1.afterFuse();
+//                    game.mainLoop();
+                    game1.init();
+                }
+                break;
+            case 97:
+                int = setInterval(loop,500);
+                break;
+            case 98:
+                clearInterval(int);
+                break;
+            default :
+                console.log('null');
+                break;
+        }
+    };
+    //end
+    var loop = function() {
+        game1.mainLoop();
+    };
+//    var int = setInterval(loop,500);
+    var int;
+    //    game.mainLoop();
+
+    //game.keyControl();
+    //draw.erase(div);
+
+
+    //bug：按住方向键不放是会出现box是空的提示，是box被消除后还未到时间生成导致  已经修复，融合之后立刻产生方块
+    //问题：原型中定义的值似乎无法通过构造函数直接引用，而在构造函数中定义的值似乎又无法再原型定义的方法中使用  已理解，是定义的问题
+    //写成了  函数名.属性 这样的形式，是给函数赋属性，通过构造函数方式产生的实例是没有这个属性的
+
+    //优化点
+    //位置和间距计算包含魔数
+    //方块间距的计算不精准
+    //新box的生成可以不生成新对象，可复用之前的box，重置数据即可，增加一个方块配置，包含边长等数据
+    //方块中保存位置的对象可以不需要每次都重新生成
+    //临时变量的名称tmpPosX tmpPosX1 太过相似，而且没有具体意义
+    //融合的时候将位置置1时需要类似事务的做法，一个格子无法融合，则全部无法融合
+    //键盘控制是否可以优化
+    //绘图方式是否可优化
+    //使用相對位置來計算位置
+</script>
+</html>
